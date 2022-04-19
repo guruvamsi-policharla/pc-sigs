@@ -1,6 +1,29 @@
+#include "gs.h"
 #include <mcl/bn256.hpp>
 using namespace mcl::bn256;
 using namespace std;
+
+GT e(const G1&, const G2&);
+
+void gencomkey(G1* u1, G1* u2, const G1& P1);
+void gencomkey(G2* v1, G2* v2, const G2& P2);
+
+void comG1(G1* com, Fr* r, G1* u1, G1* u2, const G1& m);
+void comG2(G2* com, Fr* s, G2* v1, G2* v2, const G2& m);
+
+void comFr(G1* com, Fr& r, G1* u1, G1* u2, const Fr& m);
+void comFr(G2* com, Fr& r, G2* v1, G2* v2, const Fr& m);
+
+void Hash(G1& P, const std::string& m);
+
+void setRandG1(G1& op, const G1& G);
+void setRandG2(G2& op, const G2& H);
+
+void AHOkeygen(G1& F, G1& K, G1& T, G1& X, G2& Y, Fr& x, const G1& G, const G2& H);
+void AHOsign(G1& A, G1& C, G2& D, G1& R, G2& S, const G1& F, const G1& T, const G1& K, const G1& M, const G1& G, const G2& H, const Fr& x);
+
+void SPCsign(proof &p, secrets &s, publicparam &pp);
+bool SPCver(proof const &p, publicparam const &pp);
 
 GT e(const G1& G1, const G2& G2){
     //Helper function for carrying out pairings in-line
@@ -18,6 +41,7 @@ void gencomkey(G1* u1, G1* u2, const G1& P1){
 
     t1.setRand();
     u2[0] = u1[0]*t1;
+    t1.setRand();
     u2[1] = u1[1]*t1;
 }
 
@@ -30,6 +54,7 @@ void gencomkey(G2* v1, G2* v2, const G2& P2){
 
     t2.setRand();
     v2[0] = v1[0]*t2;
+    t2.setRand();
     v2[1] = v2[0]*t2;
 }
 
@@ -113,26 +138,6 @@ void AHOsign(G1& A, G1& C, G2& D, G1& R, G2& S, const G1& F, const G1& T, const 
     A = A*(1/(x+c));
 }
 
-struct proof{
-    //Groth-Sahai proof attached as part of the set pre-constrained group signature. Number of variables may seem cumbersome but this helps with understanding logic in the code.
-    G2 combeta1[2], comgamma1[2], combeta2[2], comgamma2[2], comsk[2], comD[2], comS[2], pi3[2][2], pi4[2][2], pi5[2][2], pi6[2][2];
-    G1 comA[2], comC[2], comR[2], compk[2], theta1, theta2, theta3[2], theta4[2][2], theta5[2][2], theta6[2][2], theta7, theta8;
-};
-
-struct secrets{
-    //Secrets which will be committed to as part of the set pre-constrained group signature.
-    Fr sk, beta1, gamma1, beta2, gamma2, sbeta1, sgamma1, sbeta2, sgamma2, ssk, rpk[2], rA[2], rC[2], rR[2], sD[2], sS[2];
-    G1 A, C, R, pk;
-    G2 D, S;
-};
-
-struct publicparam{
-    //Public paramters in the entire construction
-    G1 G, Pw1, Pw2, L, ct1, ct2, M, Q1, Q2, F, K, T, X, id1, u1[2], u2[2], u[2], P1, Tinv, Kinv;
-    G2 H, Y, v1[2], v2[2], v[2], P2, _i2[2], id2, Hinv;
-    Fp12 idT;
-    string m;
-};
 
 void SPCsign(proof &p, secrets &s, publicparam &pp){
     //Constructs a Groth-Sahai proof satisfying necessary constraints for set pre-constrained group signature scheme.
@@ -160,6 +165,7 @@ void SPCsign(proof &p, secrets &s, publicparam &pp){
     
     //Proof construction
     comG1(p.compk, s.rpk, pp.u1, pp.u2, s.pk);
+    comG1(p.comHG, s.rHG, pp.u1, pp.u2, s.HG);
     comFr(p.comsk, s.ssk, pp.v1, pp.v2, s.sk);
     comFr(p.combeta1, s.sbeta1, pp.v1, pp.v2, s.beta1);
     comFr(p.comgamma1, s.sgamma1, pp.v1, pp.v2, s.gamma1);
@@ -189,6 +195,17 @@ void SPCsign(proof &p, secrets &s, publicparam &pp){
     p.theta3[0] = pp.u1[0]*Tt[0] + pp.u2[0]*Tt[1];
     p.theta3[1] = pp.u1[1]*Tt[0] + pp.u2[1]*Tt[1] + pp.G*s.ssk;
     
+    //Proof hG^sk . HG^-1 = 1
+    Tt[0].setRand(); Tt[1].setRand();
+
+    p.pi9[0][0] = pp._i2[0]*(s.rHG[0]) - (pp.v1[0]*Tt[0]);
+    p.pi9[0][1] = pp._i2[1]*(s.rHG[0]) - (pp.v1[1]*Tt[0]);
+    p.pi9[1][0] = pp._i2[0]*(s.rHG[1]) - (pp.v1[0]*Tt[1]);
+    p.pi9[1][1] = pp._i2[1]*(s.rHG[1]) - (pp.v1[1]*Tt[1]);
+    
+    p.theta9[0] = pp.u1[0]*Tt[0] + pp.u2[0]*Tt[1];
+    p.theta9[1] = pp.u1[1]*Tt[0] + pp.u2[1]*Tt[1] + pp.hG*s.ssk;
+
     //Proof e(F,D).e(C,H^-1) = 1        
     TT[0][0].setRand();
     TT[0][1].setRand();
@@ -297,7 +314,6 @@ bool SPCver(proof const &p, publicparam const &pp){
     if(!(lhs==rhs))
         flag=true;
     
-    //Constraint 3
     //Equation 2
     lhs = e(p.compk[0], pp._i2[1]);
     rhs = e(pp.u1[0], p.pi3[0][1])*e(pp.u2[0], p.pi3[1][1])*e(p.theta3[0], pp.v1[1]);
@@ -305,7 +321,6 @@ bool SPCver(proof const &p, publicparam const &pp){
     if(!(lhs==rhs))
         flag=true;
     
-    //Constraint 3
     //Equation 3
     lhs = e(pp.G, p.comsk[0])*e(p.compk[1], pp._i2[0]);
     rhs = e(pp.u1[1], p.pi3[0][0])*e(pp.u2[1], p.pi3[1][0])*e(p.theta3[1], pp.v1[0]);
@@ -313,10 +328,35 @@ bool SPCver(proof const &p, publicparam const &pp){
     if(!(lhs==rhs))
         flag=true;
     
-    //Constraint 3
     //Equation 4
     lhs = e(pp.G, p.comsk[1])*e(p.compk[1], pp._i2[1]);
     rhs = e(pp.u1[1], p.pi3[0][1])*e(pp.u2[1], p.pi3[1][1])*e(p.theta3[1], pp.v1[1]);
+
+    //Constraint 9
+    //Equation 1
+    lhs = e(p.comHG[0], pp._i2[0]);
+    rhs = e(pp.u1[0], p.pi9[0][0])*e(pp.u2[0], p.pi9[1][0])*e(p.theta9[0], pp.v1[0]);
+
+    if(!(lhs==rhs))
+        flag=true;
+    
+    //Equation 2
+    lhs = e(p.comHG[0], pp._i2[1]);
+    rhs = e(pp.u1[0], p.pi9[0][1])*e(pp.u2[0], p.pi9[1][1])*e(p.theta9[0], pp.v1[1]);
+    
+    if(!(lhs==rhs))
+        flag=true;
+    
+    //Equation 3
+    lhs = e(pp.hG, p.comsk[0])*e(p.comHG[1], pp._i2[0]);
+    rhs = e(pp.u1[1], p.pi9[0][0])*e(pp.u2[1], p.pi9[1][0])*e(p.theta9[1], pp.v1[0]);
+
+    if(!(lhs==rhs))
+        flag=true;
+    
+    //Equation 4
+    lhs = e(pp.hG, p.comsk[1])*e(p.comHG[1], pp._i2[1]);
+    rhs = e(pp.u1[1], p.pi9[0][1])*e(pp.u2[1], p.pi9[1][1])*e(p.theta9[1], pp.v1[1]);
 
     //Constraint 4
     //Equation 1
@@ -447,6 +487,7 @@ void setup(publicparam &pp){
 
     setRandG1(pp.P1, pp.G);
     setRandG2(pp.P2, pp.H);
+    Hash(pp.hG, "input to random oracle here");
 
     gencomkey(pp.u1, pp.u2, pp.P1);
     gencomkey(pp.v1, pp.v2, pp.P2);

@@ -1,7 +1,8 @@
 #include <mcl/bn256.hpp>
+#include "gs.h"
 #include <iostream>
 #include <chrono>
-#include "gs.h"
+
 using namespace mcl::bn256;
 using namespace std;
 using namespace std::chrono;
@@ -15,7 +16,7 @@ int main(int argc, char** argv){
 
     cout<<"Averaging over "<<N<<" iterations"<<endl;
     
-    initPairing(); //Assuming SXDH holds in BN254
+    initPairing(mcl::BN254); //Assuming SXDH holds in BN254
     
     proof p;
     secrets s;
@@ -32,8 +33,10 @@ int main(int argc, char** argv){
     setup(pp);
 
     //Creating client's public and secret key
-    s.sk.setRand(); G1::mul(s.pk, pp.G, s.sk); // pk = G^sk
-
+    s.sk.setRand(); 
+    s.pk = pp.G*s.sk; // pk = G^sk
+    s.HG = pp.hG*s.sk; //HG = hG^sk
+    
     //Receving AHO signature on public key from server
     Fr x;//AHO secret key
     AHOkeygen(pp.F, pp.K, pp.T, pp.X, pp.Y, x, pp.G, pp.H);
@@ -80,7 +83,7 @@ int main(int argc, char** argv){
         //cout<<proveduration.count() << endl;
         verduration = duration_cast<microseconds>(stopver - startver);
         //cout << "Verify time:"<<verduration.count() << endl;
-        //cout<<verduration.count() << endl;
+        // cout<<verduration.count() << endl;
         openduration = duration_cast<microseconds>(endopen - startopen);
         //cout<<"open time:"<<openduration.count()<<endl;
         //cout<<openduration.count()<<endl;
@@ -91,8 +94,9 @@ int main(int argc, char** argv){
     
     }
 
-    cout<< "Mean prove time:"<<provetotal/N<<endl;
-    cout<< "Mean verify time:"<<verifytotal/N<<endl;
-    cout<< "Mean open time:"<<opentotal/N<<endl;
+    cout<< "Mean prove time (\u03BCs):"<<provetotal/N<<endl;
+    cout<< "Mean verify time (\u03BCs):"<<verifytotal/N<<endl;
+    cout<< "Mean open time (\u03BCs):"<<opentotal/N<<endl;
     
 }
+
