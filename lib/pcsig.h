@@ -1,24 +1,23 @@
 #pragma once
-// #define bn254 1
-// #define bn386 2
-// #define bn512 3
 
-// #ifndef curve
-// #define curve bn254
-// #endif
+#define curveid 1
 
-// #if curve == bn254
+#ifndef curveid
+#define curveid 1
+#endif
+
+#if curveid == 1
 #include <mcl/bn256.hpp>
 using namespace mcl::bn256;
-// #elif curve == bn384
-// #include <mcl/bn384.hpp>
-// using namespace mcl::bn384;
-// #elif curve == bn512
-// #include <mcl/bn512.hpp>
-// using namespace mcl::bn512;
-// #else
-// #error "Invalid choice for curve."
-// #endif
+#elif curveid == 2
+#include <mcl/bn384.hpp>
+using namespace mcl::bn384;
+#elif curveid == 3
+#include <mcl/bn512.hpp>
+using namespace mcl::bn512;
+#else
+#error "Invalid choice for curve."
+#endif
 
 
 struct proof{

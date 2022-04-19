@@ -1,29 +1,19 @@
-#include "gs.h"
+#include "pcsig.h"
+
+#if curveid == 1
 #include <mcl/bn256.hpp>
 using namespace mcl::bn256;
+#elif curveid == 2
+#include <mcl/bn384.hpp>
+using namespace mcl::bn384;
+#elif curveid == 3
+#include <mcl/bn512.hpp>
+using namespace mcl::bn512;
+#else
+#error "Invalid choice for curve."
+#endif
+
 using namespace std;
-
-GT e(const G1&, const G2&);
-
-void gencomkey(G1* u1, G1* u2, const G1& P1);
-void gencomkey(G2* v1, G2* v2, const G2& P2);
-
-void comG1(G1* com, Fr* r, G1* u1, G1* u2, const G1& m);
-void comG2(G2* com, Fr* s, G2* v1, G2* v2, const G2& m);
-
-void comFr(G1* com, Fr& r, G1* u1, G1* u2, const Fr& m);
-void comFr(G2* com, Fr& r, G2* v1, G2* v2, const Fr& m);
-
-void Hash(G1& P, const std::string& m);
-
-void setRandG1(G1& op, const G1& G);
-void setRandG2(G2& op, const G2& H);
-
-void AHOkeygen(G1& F, G1& K, G1& T, G1& X, G2& Y, Fr& x, const G1& G, const G2& H);
-void AHOsign(G1& A, G1& C, G2& D, G1& R, G2& S, const G1& F, const G1& T, const G1& K, const G1& M, const G1& G, const G2& H, const Fr& x);
-
-void SPCsign(proof &p, secrets &s, publicparam &pp);
-bool SPCver(proof const &p, publicparam const &pp);
 
 GT e(const G1& G1, const G2& G2){
     //Helper function for carrying out pairings in-line

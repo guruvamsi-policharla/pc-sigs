@@ -1,4 +1,4 @@
-#include "pcsig.h"
+#include "linkpcsig.h"
 
 #if curveid == 1
 #include <mcl/bn256.hpp>
@@ -62,15 +62,6 @@ int main(int argc, char** argv){
     //Creating client's public and secret key
     s.sk.setRand(); 
     s.pk = pp.G*s.sk; // pk = G^sk
-    s.HG = pp.hG*s.sk; //HG = hG^sk
-    
-    //Receving AHO signature on public key from server
-    Fr x;//AHO secret key
-    AHOkeygen(pp.F, pp.K, pp.T, pp.X, pp.Y, x, pp.G, pp.H);
-    AHOsign(s.A, s.C, s.D, s.R, s.S, pp.F, pp.T, pp.K, s.pk, pp.G, pp.H, x);
-    //e(C,H) = e(F,D)
-    //e(R,H) = e(G,S)
-    //e(A,Y.D) = e(K.pk, H).e(T,S)
     
     //ApplePSI secretkey
     Fr alpha;
