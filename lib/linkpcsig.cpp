@@ -105,11 +105,9 @@ void setRandG2(G2& op, const G2& H){
 }
 
 void SPCsign(proof &p, secrets &s, publicparam &pp){
-    //Constructs a Groth-Sahai proof satisfying necessary constraints for set pre-constrained group signature scheme.
-    //Some helper variables
+    //Constructs a Groth-Sahai proof satisfying necessary constraints for linkable set pre-constrained group signature scheme.
     
     //Constraint Creation
-    Fr Tt[2], TT[2][2];
     s.beta1.setRand(); //ApplePSI enc
     s.gamma1.setRand(); //ApplePSI enc
     s.beta2.setRand(); //ApplePSI enc

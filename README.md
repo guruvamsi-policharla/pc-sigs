@@ -30,7 +30,7 @@ add_subdirectory(pc-sigs)
 
 <!-- Add pcsig_bench to the first line of the CMakeLists.txt file in the sample folder. -->
 
-In the mcl directory execute the following commands
+Replace `build.sh` in the mcl directory with the `pc-sigs/build.sh`. Then execute the following command in the `mcl` directory
 ```bash
 ./build.sh
 ```

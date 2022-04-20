@@ -1,6 +1,6 @@
 #pragma once
 
-#define curveid 3
+#define curveid 1
 
 #ifndef curveid
 #define curveid 1
