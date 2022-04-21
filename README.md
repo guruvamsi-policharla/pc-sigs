@@ -45,6 +45,9 @@ These binary takes two parameters:
 
 By default the parameters are set to 100 and "hello world".
 
+## Choosing Curves
+Our implementation currently supports three curves BN254, BN381_1, BN462. To change the curve used, modify the preprocessor macro `curveid` in [`lib/pcsig.h`](lib/pcsig.h) and [`lib/linkpcsig.h`](lib/linkpcsig.h) and recompile.
+
 <!-- ## Benchmarks
 Benchmark results in milliseconds on a 1.8 GHz Intel Core i7 Processor with 8 GB of RAM.
 
