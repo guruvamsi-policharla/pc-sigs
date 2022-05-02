@@ -1,9 +1,9 @@
 # Set Pre-Constrained Group Signatures
 
-_C++ implementation of the pre-constrained group signature scheme introduced in ..._
+_C++ implementation of Set pre-constrained group signatures._
 
 ## Dependencies
-This project uses the [mcl](https://github.com/herumi/mcl/) library for group arithmetic and pairings. The mcl library in turn requires [GMP](https://gmplib.org/).
+This project uses the [mcl](https://github.com/herumi/mcl/) library for group arithmetic and pairings. The mcl library in turn requires [GMP](https://gmplib.org/) which must be installed separately.
 
 ## Overview
 * [`lib/pcsig.h`](lib/pcsig.h): Library for set pre-constrained group signatures with functions for creating and verifying signatures.
@@ -12,9 +12,8 @@ This project uses the [mcl](https://github.com/herumi/mcl/) library for group ar
 * [`pcsig_bench.cpp`](pcsig_bench.cpp): Benchmark of the linkable set pre-constrained group signature scheme.
 
 ## Instructions for Benchmarking
-Start by cloning the repositories.
+Start by cloning the mcl repository.
 ```bash
-git clone https://github.com/guruvamsi-policharla/pc-sigs
 git clone https://github.com/herumi/mcl
 ```
 
@@ -30,7 +29,7 @@ Replace `build.sh` in the mcl directory with the `pc-sigs/build.sh`. Then execut
 ```
 (You may need to make build.sh executable.)
 
-Navigate to `build/bin` and you should find two binaries titled `pcsig_bench` and `linkpcsig_bench`.
+Navigate to `build/bin` and you should find two binaries titled `pcsig_bench` and `linkpcsig_bench` corresponding to the SPC group signature and linkable SPC group signature respectively.
 
 These binary takes two parameters:
 
