@@ -1,6 +1,6 @@
 #pragma once
 
-#define curveid 1
+#define curveid 3
 
 #ifndef curveid
 #define curveid 1
@@ -55,6 +55,7 @@ void Hash(G1& P, const std::string& m);
 void setRandG1(G1& op, const G1& G);
 void setRandG2(G2& op, const G2& H);
 
+void SPCEnc(proof &p, secrets &s, publicparam &pp);
 void SPCsign(proof &p, secrets &s, publicparam &pp);
 bool SPCver(proof const &p, publicparam const &pp);
 

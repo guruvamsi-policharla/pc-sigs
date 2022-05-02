@@ -128,16 +128,8 @@ void AHOsign(G1& A, G1& C, G2& D, G1& R, G2& S, const G1& F, const G1& T, const 
     A = A*(1/(x+c));
 }
 
-
-void SPCsign(proof &p, secrets &s, publicparam &pp){
-    //Constructs a Groth-Sahai proof satisfying necessary constraints for set pre-constrained group signature scheme.
-    //Some helper variables
-    pp.Hinv = -pp.H;
-    pp.Tinv = -pp.T;
-    pp.Kinv = -pp.K;
-    
-    //Constraint Creation
-    Fr Tt[2], TT[2][2];
+void SPCEnc(proof &p, secrets &s, publicparam &pp){
+    //////////SPC Enc begin
     s.beta1.setRand(); //ApplePSI enc
     s.gamma1.setRand(); //ApplePSI enc
     s.beta2.setRand(); //ApplePSI enc
@@ -152,6 +144,18 @@ void SPCsign(proof &p, secrets &s, publicparam &pp){
 
     pp.Q1 = pp.M*s.beta1 + pp.G*s.gamma1; //Q1 = Hy^beta1 . G^gamma1 (Constraint 2)
     pp.Q2 = pp.M*s.beta2 + pp.G*s.gamma2; //Q2 = Hy^beta2 . G^gamma2 (Constraint 8)
+    /////////SPC Enc end   
+}
+
+void SPCsign(proof &p, secrets &s, publicparam &pp){
+    //Constructs a Groth-Sahai proof satisfying necessary constraints for set pre-constrained group signature scheme.
+    //Some helper variables
+    pp.Hinv = -pp.H;
+    pp.Tinv = -pp.T;
+    pp.Kinv = -pp.K;
+    
+    //Constraint Creation
+    Fr Tt[2], TT[2][2];
     
     //Proof construction
     comG1(p.compk, s.rpk, pp.u1, pp.u2, s.pk);

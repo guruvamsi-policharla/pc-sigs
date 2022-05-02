@@ -68,15 +68,25 @@ int main(int argc, char** argv){
     alpha.setRand();
     pp.L = pp.G*alpha; //L = G^alpha
     
-    auto startprove = high_resolution_clock::now(), stopprove = high_resolution_clock::now(), startver = high_resolution_clock::now(), stopver = high_resolution_clock::now(), 
+   auto startenc = high_resolution_clock::now(), stopenc = high_resolution_clock::now(),
+    startprove = high_resolution_clock::now(), stopprove = high_resolution_clock::now(), 
+    startver = high_resolution_clock::now(), stopver = high_resolution_clock::now(), 
     startopen = high_resolution_clock::now(), endopen = high_resolution_clock::now();
 
-    double provetotal = 0, verifytotal = 0, opentotal = 0;
+    double enctotal = 0, provetotal = 0, verifytotal = 0, opentotal = 0;
 
-    auto proveduration = duration_cast<microseconds>(stopprove - startprove), verduration = duration_cast<microseconds>(stopver - startver), openduration = duration_cast<microseconds>(endopen - startopen);
+    auto encduration = duration_cast<microseconds>(endopen - startopen),
+    proveduration = duration_cast<microseconds>(stopprove - startprove), 
+    verduration = duration_cast<microseconds>(stopver - startver), 
+    openduration = duration_cast<microseconds>(endopen - startopen);
 
     bool flag=false;
     for(int i = 0; i<N;i++){ //Benchmarking loop
+
+        startenc = high_resolution_clock::now();
+        SPCEnc(p,s,pp);
+        stopenc = high_resolution_clock::now();
+
         //Proving  
         startprove = high_resolution_clock::now();
         SPCsign(p, s, pp);
@@ -96,22 +106,19 @@ int main(int argc, char** argv){
         pkopen2 = pp.ct2 - (pp.Q2*alpha);
         endopen = high_resolution_clock::now();
         
+        encduration = duration_cast<microseconds>(stopenc - startenc);
         proveduration = duration_cast<microseconds>(stopprove - startprove);
-        //cout << "Prove time:"<<proveduration.count() << endl;
-        //cout<<proveduration.count() << endl;
         verduration = duration_cast<microseconds>(stopver - startver);
-        //cout << "Verify time:"<<verduration.count() << endl;
-        // cout<<verduration.count() << endl;
         openduration = duration_cast<microseconds>(endopen - startopen);
-        //cout<<"open time:"<<openduration.count()<<endl;
-        //cout<<openduration.count()<<endl;
 
+        enctotal = enctotal + encduration.count();
         provetotal = provetotal + proveduration.count();
         verifytotal = verifytotal + verduration.count();
         opentotal = opentotal + openduration.count();
     
     }
 
+    cout<< "Mean enc time (\u03BCs):"<<enctotal/N<<endl;
     cout<< "Mean prove time (\u03BCs):"<<provetotal/N<<endl;
     cout<< "Mean verify time (\u03BCs):"<<verifytotal/N<<endl;
     cout<< "Mean open time (\u03BCs):"<<opentotal/N<<endl;

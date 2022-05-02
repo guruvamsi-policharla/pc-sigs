@@ -60,6 +60,7 @@ void setRandG2(G2& op, const G2& H);
 void AHOkeygen(G1& F, G1& K, G1& T, G1& X, G2& Y, Fr& x, const G1& G, const G2& H);
 void AHOsign(G1& A, G1& C, G2& D, G1& R, G2& S, const G1& F, const G1& T, const G1& K, const G1& M, const G1& G, const G2& H, const Fr& x);
 
+void SPCEnc(proof &p, secrets &s, publicparam &pp);
 void SPCsign(proof &p, secrets &s, publicparam &pp);
 bool SPCver(proof const &p, publicparam const &pp);
 

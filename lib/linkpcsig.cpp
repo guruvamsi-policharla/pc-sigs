@@ -104,14 +104,13 @@ void setRandG2(G2& op, const G2& H){
     op = H*tempF;
 }
 
-void SPCsign(proof &p, secrets &s, publicparam &pp){
-    //Constructs a Groth-Sahai proof satisfying necessary constraints for linkable set pre-constrained group signature scheme.
-    
-    //Constraint Creation
+void SPCEnc(proof &p, secrets &s, publicparam &pp){
+    //////////SPC Enc begin
     s.beta1.setRand(); //ApplePSI enc
     s.gamma1.setRand(); //ApplePSI enc
     s.beta2.setRand(); //ApplePSI enc
     s.gamma2.setRand(); //ApplePSI enc
+    
     
     setRandG1(pp.Pw1, pp.G); //Just a random group element
     setRandG1(pp.Pw2, pp.G); //Just a random group element
@@ -121,6 +120,11 @@ void SPCsign(proof &p, secrets &s, publicparam &pp){
 
     pp.Q1 = pp.M*s.beta1 + pp.G*s.gamma1; //Q1 = Hy^beta1 . G^gamma1 (Constraint 2)
     pp.Q2 = pp.M*s.beta2 + pp.G*s.gamma2; //Q2 = Hy^beta2 . G^gamma2 (Constraint 8)
+    /////////SPC Enc end   
+}
+
+void SPCsign(proof &p, secrets &s, publicparam &pp){
+    //Constructs a Groth-Sahai proof satisfying necessary constraints for linkable set pre-constrained group signature scheme.
     
     //Proof construction
     comFr(p.comsk, s.ssk, pp.v1, pp.v2, s.sk);
