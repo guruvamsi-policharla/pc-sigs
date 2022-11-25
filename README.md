@@ -1,6 +1,8 @@
 # Set Pre-Constrained Group Signatures
 
-_C++ implementation of the pre-constrained group signature scheme introduced in ..._
+C++ implementation of the pre-constrained group signature scheme introduced in ...
+
+**WARNING:** This is an academic proof-of-concept prototype, and in particular has not received careful code review. This implementation is NOT ready for production use.
 
 ## Dependencies
 This project uses the [mcl](https://github.com/herumi/mcl/) library for group arithmetic and pairings. The mcl library in turn requires [GMP](https://gmplib.org/).
@@ -41,3 +43,6 @@ By default the parameters are set to 100 and "hello world".
 
 ## Choosing Curves
 Our implementation currently supports three curves BN254, BN381_1, BN462. To change the curve used, modify the preprocessor macro `curveid` in [`lib/pcsig.h`](lib/pcsig.h) and [`lib/linkpcsig.h`](lib/linkpcsig.h) and recompile by running `make` inside the `mcl/build` directory.
+
+## License
+This library is released under the MIT License.
