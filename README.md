@@ -34,7 +34,7 @@ Replace `build.sh` in the mcl directory with the `pc-sigs/build.sh`. Then execut
 
 Navigate to `build/bin` and you should find two binaries titled `pcsig_bench` and `linkpcsig_bench`.
 
-These binary takes two parameters:
+These binaries take two parameters:
 
 1. Number of signatures to average over.
 2. Message to create the signature on.
