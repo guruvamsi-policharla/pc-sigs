@@ -48,7 +48,7 @@ void gencomkey(G2* v1, G2* v2, const G2& P2){
     t2.setRand();
     v2[0] = v1[0]*t2;
     t2.setRand();
-    v2[1] = v2[0]*t2;
+    v2[1] = v1[1]*t2;
 }
 
 void comG1(G1* com, Fr* r, G1* u1, G1* u2, const G1& m){
