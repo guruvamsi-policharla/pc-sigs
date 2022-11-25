@@ -9,6 +9,9 @@ using namespace mcl::bn384;
 #elif curveid == 3
 #include <mcl/bn512.hpp>
 using namespace mcl::bn512;
+#elif curveid == 4
+#include <mcl/bls12_381.hpp>
+using namespace mcl::bls12;
 #else
 #error "Invalid choice for curve."
 #endif
@@ -40,6 +43,10 @@ int main(int argc, char** argv){
     case 3:
         cout<<"Using curve BN462"<<endl;
         initPairing(mcl::BN462); //Assuming SXDH holds in BN462
+        break;
+    case 4:
+        cout<<"Using curve BLS12_381"<<endl;
+        initPairing(mcl::BLS12_381); //Assuming SXDH holds in BLS12_381
         break;
     default:
         std::perror("Invalid choice for curve.");

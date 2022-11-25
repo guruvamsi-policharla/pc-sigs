@@ -1,6 +1,6 @@
 #pragma once
 
-#define curveid 3
+#define curveid 4
 
 #ifndef curveid
 #define curveid 1
@@ -15,6 +15,9 @@ using namespace mcl::bn384;
 #elif curveid == 3
 #include <mcl/bn512.hpp>
 using namespace mcl::bn512;
+#elif curveid == 4
+#include <mcl/bls12_381.hpp>
+using namespace mcl::bls12;
 #else
 #error "Invalid choice for curve."
 #endif
