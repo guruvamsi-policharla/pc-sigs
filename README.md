@@ -1,6 +1,6 @@
 # Set Pre-Constrained Group Signatures
 
-C++ implementation of the pre-constrained group signature scheme introduced in ...
+C++ implementation of the pre-constrained group signature scheme introduced in [ePrint:2022/1643](https://eprint.iacr.org/2022/1643)
 
 **WARNING:** This is an academic proof-of-concept prototype, and in particular has not received careful code review. This implementation is NOT ready for production use.
 
